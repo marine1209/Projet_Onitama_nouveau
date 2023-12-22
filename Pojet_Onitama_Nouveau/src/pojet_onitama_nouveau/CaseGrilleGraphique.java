@@ -110,7 +110,20 @@ public class CaseGrilleGraphique extends JButton {
         caseGrilleAssociee.getPion_associe().changement_coord(ligne, colonne);
         mettreAJour();
         repaint();
-    }     
+    } 
+public void Manger(Pions pionAttaque, Pions pionAttaquant) {
+        int ligneAttaque = pionAttaque.getPosition_ligne();
+        int colonneAttaque = pionAttaque.getPosition_colonne();
+        int ligneAttaquant = pionAttaquant.getPosition_ligne();
+        int colonneAttaquant= pionAttaquant.getPosition_colonne();      
+        if (pionAttaque.getCouleur()!= pionAttaquant.getCouleur()){
+            pionAttaque.estMort(); 
+            caseGrilleAssociee.setEtat(false);
+            caseGrilleAssociee.setPion_associe(pionAttaquant);
+        } 
+        
+    }      
+    
             
            
         
