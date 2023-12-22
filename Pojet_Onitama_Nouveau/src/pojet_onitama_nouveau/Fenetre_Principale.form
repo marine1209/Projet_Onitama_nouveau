@@ -163,6 +163,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JButton" name="Bcartecote">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BcartecoteActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="PanneauInfoJR">
       <Properties>

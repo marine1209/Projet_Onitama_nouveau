@@ -10,6 +10,7 @@ import static java.awt.Color.GRAY;
 import static java.awt.Color.GREEN;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     ArrayList<Cartes2> cartesTirees;
     private Pions PionSelectionné;
     Cartes2 carteSelectionnée;
+    ArrayList<Cartes2> CartesRouges;
+    ArrayList<Cartes2> CartesBleues;
+    ArrayList<Cartes2> CarteDefausse;
 
     /**
      * Constructeur de la fenêtre principale.
@@ -84,6 +88,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
      */
     public void tirageCartes() {
         ArrayList<Cartes2> cartesTirees = new ArrayList<Cartes2>();
+        ArrayList<Cartes2> CartesRouges = new ArrayList<Cartes2>();
+        ArrayList<Cartes2> CartesBleues = new ArrayList<Cartes2>();
+        ArrayList<Cartes2> CarteDefausse = new ArrayList<Cartes2>();
         ArrayList<String> nomCartes = new ArrayList<String>();
         nomCartes.add("boar");
         nomCartes.add("cobra");
@@ -102,13 +109,32 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         nomCartes.add("rooster");
         nomCartes.add("tiger");
         Random random = new Random();
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 2; j++) {
             int nombreTireAuHasard = random.nextInt(16 - j);
             String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
-            cartesTirees.add(new Cartes2(nomCarteTiree));
+            CartesRouges.add(new Cartes2(nomCarteTiree));
             nomCartes.remove(nombreTireAuHasard);
         }
+        
+        for (int j = 0; j < 2; j++) {
+            int nombreTireAuHasard = random.nextInt(14 - j);
+            String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
+            CartesBleues.add(new Cartes2(nomCarteTiree));
+            nomCartes.remove(nombreTireAuHasard);
+        }
+        for (int j = 0; j < 1; j++) {
+            int nombreTireAuHasard = random.nextInt(12 - j);
+            String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
+            CarteDefausse.add(new Cartes2(nomCarteTiree));
+            nomCartes.remove(nombreTireAuHasard);
+        }
+        System.out.println(CartesRouges.size());
+        System.out.println(CartesBleues.size());
+        System.out.println(CarteDefausse.size());
         this.cartesTirees = cartesTirees;
+        this.CartesRouges = CartesRouges;
+        this.CartesBleues = CartesBleues;
+        this.CarteDefausse = CarteDefausse;
     }
 
     /**
@@ -118,9 +144,22 @@ public class Fenetre_Principale extends javax.swing.JFrame {
      */
     public void affichageCartes() {
 
-        for (int j = 0; j < cartesTirees.size(); j++) {
-
-            ImageIcon Icon = createImageIcon("/image/" + this.cartesTirees.get(j).nom + ".jpg");
+        for (int j = 0; j < CartesRouges.size(); j++) {
+            ImageIcon Icon = createImageIcon("/image/" + this.CartesRouges.get(j).nom + ".jpg");
+            switch (j) {
+                case 0:
+                    JRcarte1.setIcon(Icon);
+                    break;
+                case 1:
+                    JRcarte2.setIcon(Icon);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        for (int j = 0; j < CartesBleues.size(); j++) {
+            ImageIcon Icon = createImageIcon("/image/" + this.CartesBleues.get(j).nom + ".jpg");
             switch (j) {
                 case 0:
                     JBcarte1.setIcon(Icon);
@@ -128,13 +167,15 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                 case 1:
                     JBcarte2.setIcon(Icon);
                     break;
-                case 2:
-                    JRcarte1.setIcon(Icon);
+                default:
                     break;
-                case 3:
-                    JRcarte2.setIcon(Icon);
-                    break;
-                case 4:
+            }
+        }
+        
+        for (int j = 0; j < CarteDefausse.size(); j++) {
+            ImageIcon Icon = createImageIcon("/image/" + this.CarteDefausse.get(j).nom + ".jpg");
+            switch (j) {
+                case 0:
                     Bcartecote.setIcon(Icon);
                     break;
                 default:
@@ -143,6 +184,8 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }
 
     }
+    
+    
 
     private ImageIcon createImageIcon(String path) {
         URL imageURL = getClass().getResource(path);
@@ -332,6 +375,12 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        Bcartecote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BcartecoteActionPerformed(evt);
+            }
+        });
+
         PanneauInfoJR.setBackground(new java.awt.Color(255, 102, 102));
         PanneauInfoJR.setMinimumSize(new java.awt.Dimension(50, 50));
         PanneauInfoJR.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -459,7 +508,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void JRcarte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte2ActionPerformed
-        carteSelectionnée = cartesTirees.get(3); // carte qui correspond
+        carteSelectionnée = CartesRouges.get(1); // carte qui correspond
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
@@ -469,7 +518,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
-        carteSelectionnée = cartesTirees.get(2); // carte qui correspond
+        carteSelectionnée = CartesRouges.get(0); // carte qui correspond
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
@@ -479,17 +528,19 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
-        carteSelectionnée = cartesTirees.get(0); // carte qui correspond
+        carteSelectionnée = CartesBleues.get(0); // carte qui correspond
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
 
         mettreEnEvidence(déplacementPossibles);
+       
+
     }//GEN-LAST:event_JBcarte1ActionPerformed
 
     private void JBcarte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte2ActionPerformed
-        carteSelectionnée = cartesTirees.get(1); // carte qui correspond
+        carteSelectionnée = CartesBleues.get(1); // carte qui correspond
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
@@ -497,6 +548,11 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
         mettreEnEvidence(déplacementPossibles);
     }//GEN-LAST:event_JBcarte2ActionPerformed
+
+    private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
+        // TODO add your handling code here:
+ 
+    }//GEN-LAST:event_BcartecoteActionPerformed
 
     /**
      * @param args the command line arguments
