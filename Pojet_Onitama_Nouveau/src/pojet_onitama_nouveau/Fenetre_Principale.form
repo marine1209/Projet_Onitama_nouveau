@@ -151,11 +151,17 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JButton" name="JBcarte1">
+          <Properties>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBcarte1ActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="JBcarte2">
+          <Properties>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBcarte2ActionPerformed"/>
           </Events>
@@ -163,6 +169,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JButton" name="Bcartecote">
+      <Properties>
+        <Property name="contentAreaFilled" type="boolean" value="false"/>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BcartecoteActionPerformed"/>
       </Events>
@@ -326,8 +335,9 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="JRcarte2">
           <Properties>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 80]"/>
+              <Dimension value="[30, 174]"/>
             </Property>
           </Properties>
           <Events>
@@ -335,12 +345,13 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="313" y="3" width="300" height="190"/>
+              <AbsoluteConstraints x="313" y="7" width="290" height="170"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JButton" name="JRcarte1">
           <Properties>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 80]"/>
             </Property>
@@ -350,7 +361,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="7" y="3" width="300" height="185"/>
+              <AbsoluteConstraints x="7" y="7" width="300" height="170"/>
             </Constraint>
           </Constraints>
         </Component>

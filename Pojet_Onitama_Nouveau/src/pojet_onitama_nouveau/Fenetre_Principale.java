@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import static java.awt.Color.GRAY;
 import static java.awt.Color.GREEN;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -31,7 +32,7 @@ import javax.swing.ImageIcon;
  * @author nicol
  */
 public class Fenetre_Principale extends javax.swing.JFrame {
-    
+
     GrilleDeJeu grille;
     int i;
     ArrayList<Cartes2> cartesTirees;
@@ -42,8 +43,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     ArrayList<Cartes2> CarteDefausse;
 
     /**
-     * Constructeur de la fenêtre principale.
-     * Initialise les composants graphiques, la grille de jeu, et configure les interactions des boutons de la grille.
+     * Constructeur de la fenêtre principale. Initialise les composants
+     * graphiques, la grille de jeu, et configure les interactions des boutons
+     * de la grille.
      */
     public Fenetre_Principale() {
         initComponents();
@@ -76,14 +78,15 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
         PanneauCartesHaut.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesHaut, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70));
+        JBcarte1.setSize(new Dimension(300, 174));
         PanneauCartesBas.setLayout(new GridLayout(1, 2));
-        getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 40, 1 * 40));
+        getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 880, 1 * 30));
 
     }
 
-
     /**
      * Méthode qui tire 5 cartes aléatoirement
+     *
      * @return un arraylist contenant les 5 cartes
      */
     public void tirageCartes() {
@@ -115,7 +118,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             CartesRouges.add(new Cartes2(nomCarteTiree));
             nomCartes.remove(nombreTireAuHasard);
         }
-        
+
         for (int j = 0; j < 2; j++) {
             int nombreTireAuHasard = random.nextInt(14 - j);
             String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
@@ -138,9 +141,10 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }
 
     /**
-     * Méthode qui Affiche les cartes tirées sur les composants graphiques appropriés.
-     * Utilise les icônes d'images spécifiées par le nom de chaque carte.
-     * 
+     * Méthode qui Affiche les cartes tirées sur les composants graphiques
+     * appropriés. Utilise les icônes d'images spécifiées par le nom de chaque
+     * carte.
+     *
      */
     public void affichageCartes() {
 
@@ -157,11 +161,12 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     break;
             }
         }
-        
+
         for (int j = 0; j < CartesBleues.size(); j++) {
             ImageIcon Icon = createImageIcon("/image/" + this.CartesBleues.get(j).nom + ".jpg");
             switch (j) {
                 case 0:
+
                     JBcarte1.setIcon(Icon);
                     break;
                 case 1:
@@ -171,7 +176,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     break;
             }
         }
-        
+
         for (int j = 0; j < CarteDefausse.size(); j++) {
             ImageIcon Icon = createImageIcon("/image/" + this.CarteDefausse.get(j).nom + ".jpg");
             switch (j) {
@@ -184,8 +189,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }
 
     }
-    
-    
 
     private ImageIcon createImageIcon(String path) {
         URL imageURL = getClass().getResource(path);
@@ -198,7 +201,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }
 
     /**
-     * Allume (met en évidence) les cellules de la grille aux coordonnées spécifiées.
+     * Allume (met en évidence) les cellules de la grille aux coordonnées
+     * spécifiées.
+     *
      * @param CoordonneePossible
      */
     /*public void Allumer(ArrayList<ArrayList<Integer>> CoordonneePossible) {
@@ -210,7 +215,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             grille.matriceCellules[l][c].mettreEnEvidence(CoordonneePossible);
         }
     }*/
-    
     public void FinDePartie(Pions pion) {
         if (pion.estEleve() == false && pion.estMort() == true) {
             if (pion.getCouleur() == "bleu") {
@@ -235,8 +239,8 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             }
         }
     }
-    
-    public void AfficherTout (boolean etat) {
+
+    public void AfficherTout(boolean etat) {
         PanneauGrille.setVisible(etat);
         PanneauCartesHaut.setVisible(etat);
         PanneauCartesBas.setVisible(etat);
@@ -246,52 +250,56 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }
 
     /**
-     * Met en évidence les cellules de la grille aux coordonnées spécifiées en les entourant d'un carré vert.
+     * Met en évidence les cellules de la grille aux coordonnées spécifiées en
+     * les entourant d'un carré vert.
+     *
      * @param CoordonneePossible
      */
-    public void mettreEnEvidence(ArrayList<ArrayList<Integer>> CoordonneePossible){
+    public void mettreEnEvidence(ArrayList<ArrayList<Integer>> CoordonneePossible) {
         int ligne;
         int colonne;
-        int ancienneLigne;
-        int ancienneColonne;
-        for (int i = 0; i<CoordonneePossible.size(); i++){
-           ligne = CoordonneePossible.get(i).get(0);
-           colonne = CoordonneePossible.get(i).get(1);
-           ancienneLigne = PionSelectionné.getPosition_ligne();
-           ancienneColonne = PionSelectionné.getPosition_colonne();
-           grille.matriceCellules[ligne][colonne].setBackground(GREEN);
-           seDeplacer(ligne, colonne, ancienneLigne, ancienneColonne);
+        int ancienneLigne = PionSelectionné.getPosition_ligne();
+        int ancienneColonne = PionSelectionné.getPosition_colonne();
+        for (int i = 0; i < CoordonneePossible.size(); i++) {
+            ligne = CoordonneePossible.get(i).get(0);
+            colonne = CoordonneePossible.get(i).get(1);
+            if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) {
+                if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur() != grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur()) {
+                    grille.matriceCellules[ligne][colonne].setBackground(GREEN);
+                }
+            }else
+               grille.matriceCellules[ligne][colonne].setBackground(GREEN); 
+            //grille.matriceCellules[ligne][colonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
+            seDeplacer(ligne, colonne, ancienneLigne, ancienneColonne);
+
         }
     }
-
-    
-    public void seDeplacer (int ligne, int colonne, int ancienneLigne, int ancienneColonne){
-        grille.matriceCellules[ligne][colonne].addActionListener(new ActionListener() {
-                // Utilisez des variables finales temporaires
-                final int finalLigne = ligne;
-                final int finalColonne = colonne;
-                final int finalancienneLigne = ancienneLigne;
-                final int finalancienneColonne = ancienneColonne;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Déplacez le pion lorsqu'une case est cliquée
-                    System.out.println(finalancienneLigne);
-                    System.out.println(finalLigne);
-                    grille.matriceCellules[finalancienneLigne][finalancienneColonne].caseGrilleAssociee.setEtat(false);
-                    grille.matriceCellules[finalancienneLigne][finalancienneColonne].mettreAJour();
-                    grille.matriceCellules[finalLigne][finalColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
-                    grille.matriceCellules[finalLigne][finalColonne].ChangementDeCase(finalLigne, finalColonne);
-                    for (int i = 0 ; i<5 ; i++) {
-                        for (int j = 0 ; j<5 ; j++) {
-                            grille.matriceCellules[i][j].setBackground(GRAY);
-                        }
+   public void deplacement(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne){
+       grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
+                grille.matriceCellules[nouvelleLigne][nouvelleColonne].ChangementDeCase(nouvelleLigne, nouvelleColonne);
+                grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.setEtat(false);
+                grille.matriceCellules[ancienneLigne][ancienneColonne].mettreAJour();
+   }
+    public void seDeplacer(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
+        grille.matriceCellules[nouvelleLigne][nouvelleColonne].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) {
+                    grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
+                   deplacement( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                } 
+                deplacement( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        grille.matriceCellules[i][j].setBackground(GRAY);
+                        grille.matriceCellules[i][j].removeActionListener(this);
                     }
                 }
-            });
-       
+            }
+        });
+
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -342,12 +350,14 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         PanneauCartesBas.setMinimumSize(new java.awt.Dimension(613, 188));
         PanneauCartesBas.setPreferredSize(new java.awt.Dimension(610, 192));
 
+        JBcarte1.setContentAreaFilled(false);
         JBcarte1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JBcarte1ActionPerformed(evt);
             }
         });
 
+        JBcarte2.setContentAreaFilled(false);
         JBcarte2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JBcarte2ActionPerformed(evt);
@@ -375,6 +385,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        Bcartecote.setContentAreaFilled(false);
         Bcartecote.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BcartecoteActionPerformed(evt);
@@ -436,21 +447,23 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         PanneauCartesHaut.setPreferredSize(new java.awt.Dimension(610, 192));
         PanneauCartesHaut.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        JRcarte2.setPreferredSize(new java.awt.Dimension(100, 80));
+        JRcarte2.setContentAreaFilled(false);
+        JRcarte2.setPreferredSize(new java.awt.Dimension(30, 174));
         JRcarte2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JRcarte2ActionPerformed(evt);
             }
         });
-        PanneauCartesHaut.add(JRcarte2, new org.netbeans.lib.awtextra.AbsoluteConstraints(313, 3, 300, 190));
+        PanneauCartesHaut.add(JRcarte2, new org.netbeans.lib.awtextra.AbsoluteConstraints(313, 7, 290, 170));
 
+        JRcarte1.setContentAreaFilled(false);
         JRcarte1.setPreferredSize(new java.awt.Dimension(100, 80));
         JRcarte1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JRcarte1ActionPerformed(evt);
             }
         });
-        PanneauCartesHaut.add(JRcarte1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 3, 300, 185));
+        PanneauCartesHaut.add(JRcarte1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 300, 170));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -535,7 +548,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
 
         mettreEnEvidence(déplacementPossibles);
-       
+
 
     }//GEN-LAST:event_JBcarte1ActionPerformed
 
@@ -545,13 +558,12 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
-
         mettreEnEvidence(déplacementPossibles);
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
         // TODO add your handling code here:
- 
+
     }//GEN-LAST:event_BcartecoteActionPerformed
 
     /**
