@@ -56,6 +56,10 @@ public class Pions {
         return eleve;
     }
 
+    public boolean estMort() {
+        return Mort;
+    }
+    
     /**
      * Récupère la couleur du pion
      * @return

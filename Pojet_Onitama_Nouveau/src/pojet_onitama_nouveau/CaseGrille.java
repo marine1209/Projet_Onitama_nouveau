@@ -4,6 +4,10 @@
  */
 package pojet_onitama_nouveau;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.ArrayList;
+
 /**
  *
  * @author marin
@@ -82,6 +86,19 @@ public class CaseGrille {
         return pion_associe;
     }
     
+    
+
+    private Graphics getGraphics() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private int getWidth() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private int getHeight() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }
 

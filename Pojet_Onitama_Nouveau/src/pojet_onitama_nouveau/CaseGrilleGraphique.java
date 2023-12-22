@@ -60,6 +60,7 @@ public class CaseGrilleGraphique extends JButton {
             g.fillOval(2, 2, longueur - 4, hauteur - 4);
         }
     }
+    
     public void mettreAJour(){
         Graphics g=this.getGraphics();
         super.paintComponent(g);
