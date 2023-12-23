@@ -304,6 +304,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     
                 }
             } else {
+                grille.matriceCellules[ligne][colonne].setEnabled(true);
                 grille.matriceCellules[ligne][colonne].setBackground(GREEN);
             }
             seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne);
