@@ -140,8 +140,14 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             JRcarte2.setEnabled(false);
         }
     }
+    public void JoueurSuivant(){
+        
+    }
     
-    
+  
+
+
+
    
     /**
      * Méthode qui Affiche les cartes tirées sur les composants graphiques
