@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import static java.awt.Color.GRAY;
 import static java.awt.Color.GREEN;
+import static java.awt.Color.WHITE;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -26,6 +27,7 @@ import javax.swing.JButton;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -49,14 +51,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
      */
     public Fenetre_Principale() {
         initComponents();
-        // coordonneesPionSelectionnée=null;
-        //carteSelectionnée=null;
-        ArrayList<ArrayList<Integer>> test = new ArrayList<ArrayList<Integer>>();
-        ArrayList<Integer> test2 = new ArrayList<>();
-        test2.add(1);
-        test2.add(4);
-        test.add(test2);
-
         tirageCartes();
         affichageCartes();
         this.grille = new GrilleDeJeu();
@@ -69,6 +63,8 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         PionSelectionné = bouton_case.onClick();
+                        //System.out.println(PionSelectionné.getPosition_ligne() + PionSelectionné.getPosition_colonne());
+                        System.out.print("test");
 
                     }
                 });
@@ -78,10 +74,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
         PanneauCartesHaut.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesHaut, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70));
-        JBcarte1.setSize(new Dimension(300, 174));
         PanneauCartesBas.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 880, 1 * 30));
-
+        //System.out.println();
     }
 
     /**
@@ -131,15 +126,23 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             CarteDefausse.add(new Cartes2(nomCarteTiree));
             nomCartes.remove(nombreTireAuHasard);
         }
-        System.out.println(CartesRouges.size());
-        System.out.println(CartesBleues.size());
-        System.out.println(CarteDefausse.size());
         this.cartesTirees = cartesTirees;
         this.CartesRouges = CartesRouges;
         this.CartesBleues = CartesBleues;
         this.CarteDefausse = CarteDefausse;
     }
-
+    public void BloquerCartesAdverses(Pions pion) {
+        if (pion.getCouleur() == "bleu") {
+            JBcarte1.setEnabled(false);
+            JBcarte2.setEnabled(false);
+        } else {
+            JRcarte1.setEnabled(false);
+            JRcarte2.setEnabled(false);
+        }
+    }
+    
+    
+   
     /**
      * Méthode qui Affiche les cartes tirées sur les composants graphiques
      * appropriés. Utilise les icônes d'images spécifiées par le nom de chaque
@@ -189,6 +192,26 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }
 
     }
+    public void echangerLesCartes(Cartes2 carteJouee){
+        if (CartesRouges.contains(carteJouee)){
+             int indiceCarteJouee = CartesRouges.indexOf(carteJouee);
+             CartesRouges.set(indiceCarteJouee, CarteDefausse.get(0));
+             CarteDefausse.set(0, carteJouee);
+                affichageCartes();
+               
+        
+        }
+        if (CartesBleues.contains(carteJouee)){
+             int indiceCarteJouee = CartesBleues.indexOf(carteJouee);
+             CartesBleues.set(indiceCarteJouee, CarteDefausse.get(0));
+             CarteDefausse.set(0, carteJouee);
+                affichageCartes();
+                
+        
+        }
+       // System.out.println(CarteDefausse.get(0).getNom());
+        
+    }
 
     private ImageIcon createImageIcon(String path) {
         URL imageURL = getClass().getResource(path);
@@ -199,55 +222,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             return null;
         }
     }
-
-    /**
-     * Allume (met en évidence) les cellules de la grille aux coordonnées
-     * spécifiées.
-     *
-     * @param CoordonneePossible
-     */
-    /*public void Allumer(ArrayList<ArrayList<Integer>> CoordonneePossible) {
-        int l, c;
-        for (int i = 0; i < CoordonneePossible.size(); i++) {
-            l = CoordonneePossible.get(i).get(0);
-            c = CoordonneePossible.get(i).get(1);
-            Graphics Graphics;
-            grille.matriceCellules[l][c].mettreEnEvidence(CoordonneePossible);
-        }
-    }*/
-    public void FinDePartie(Pions pion) {
-        if (pion.estEleve() == false && pion.estMort() == true) {
-            if (pion.getCouleur() == "bleu") {
-                this.AfficherTout(false);
-                Bcartecote.setVisible(true);
-                Bcartecote.setText("Victoire des rouges !");
-            } else if (pion.getCouleur() == "rouge") {
-                this.AfficherTout(false);
-                Bcartecote.setVisible(true);
-                Bcartecote.setText("Victoire des bleus !");
-            }
-        }
-        if (pion.estEleve() == false) {
-            if (pion.getCouleur() == "bleu" && (pion.getPosition_ligne() == 0 && pion.getPosition_colonne() == 2)) {
-                this.AfficherTout(false);
-                Bcartecote.setVisible(true);
-                Bcartecote.setText("Victoire des bleus !");
-            } else if (pion.getCouleur() == "rouge" && (pion.getPosition_ligne() == 4 && pion.getPosition_colonne() == 2)) {
-                this.AfficherTout(false);
-                Bcartecote.setVisible(true);
-                Bcartecote.setText("Victoire des rouges !");
-            }
-        }
-    }
-
-    public void AfficherTout(boolean etat) {
-        PanneauGrille.setVisible(etat);
-        PanneauCartesHaut.setVisible(etat);
-        PanneauCartesBas.setVisible(etat);
-        PanneauInfoJR.setVisible(etat);
-        PanneauInfoJB.setVisible(etat);
-        Bcartecote.setVisible(etat);
-    }
+ 
 
     /**
      * Met en évidence les cellules de la grille aux coordonnées spécifiées en
@@ -266,38 +241,42 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) {
                 if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur() != grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur()) {
                     grille.matriceCellules[ligne][colonne].setBackground(GREEN);
+                    grille.matriceCellules[ligne][colonne].setEnabled(true);
                 }
             }else
                grille.matriceCellules[ligne][colonne].setBackground(GREEN); 
-            //grille.matriceCellules[ligne][colonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
-            seDeplacer(ligne, colonne, ancienneLigne, ancienneColonne);
-
+               seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne);
+                  
+      
         }
+     echangerLesCartes(carteSelectionnée);
     }
-   public void deplacement(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne){
+   public void deplacementDuPion(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne){
        grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
                 grille.matriceCellules[nouvelleLigne][nouvelleColonne].ChangementDeCase(nouvelleLigne, nouvelleColonne);
                 grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.setEtat(false);
                 grille.matriceCellules[ancienneLigne][ancienneColonne].mettreAJour();
+                
    }
-    public void seDeplacer(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
+
+   public void seDeplacerSurLaCase(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
         grille.matriceCellules[nouvelleLigne][nouvelleColonne].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                
                 if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) {
                     grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
-                   deplacement( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                   deplacementDuPion( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
                 } 
-                deplacement( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                deplacementDuPion( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
-                        grille.matriceCellules[i][j].setBackground(GRAY);
+                        grille.matriceCellules[i][j].setBackground(WHITE);
                         grille.matriceCellules[i][j].removeActionListener(this);
                     }
                 }
             }
         });
-
     }
 
     @SuppressWarnings("unchecked")
@@ -521,23 +500,23 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void JRcarte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte2ActionPerformed
+
         carteSelectionnée = CartesRouges.get(1); // carte qui correspond
-        System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
-
         mettreEnEvidence(déplacementPossibles);
+        System.out.println("coucou");
+       // echangerLesCartes(CartesRouges.get(1));
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
+
         carteSelectionnée = CartesRouges.get(0); // carte qui correspond
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
-
         mettreEnEvidence(déplacementPossibles);
+        //echangerLesCartes(CartesRouges.get(0));
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
@@ -545,9 +524,8 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         System.out.println("Coordonnées du pion : " + PionSelectionné);
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
-
         mettreEnEvidence(déplacementPossibles);
+       //echangerLesCartes(CartesBleues.get(0));
 
 
     }//GEN-LAST:event_JBcarte1ActionPerformed
@@ -559,6 +537,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
         mettreEnEvidence(déplacementPossibles);
+      // echangerLesCartes(CartesBleues.get(1));
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
