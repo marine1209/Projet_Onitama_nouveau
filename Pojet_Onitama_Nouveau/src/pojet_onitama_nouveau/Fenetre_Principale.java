@@ -130,17 +130,21 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             for (int j = 0; j < 5; j++) {
                 if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee() == true) {
                     if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estMort() == true) {
+                        FinDePartie();
                         return true;
                     }
                     if (grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.getCouleur() == "bleu") {
+                        FinDePartie();
                         return true;
                     }
                     if (grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.getCouleur() == "rouge") {
+                        FinDePartie();
                         return true;
                     }
                 }
             }
         }
+        
         return false;
     }
 
@@ -162,18 +166,14 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     
     
     public void DebloquerCartesJoueur(Pions pion) {
-        System.out.println("Déblocage des cartes pour le joueur " + pion.getCouleur());
-    
         if (pion.getCouleur() == "bleu") {
             JBcarte1.setEnabled(true);
             JBcarte2.setEnabled(true);
-            JRcarte1.setEnabled(false);
-            JRcarte2.setEnabled(false);
+        
         } else {
             JRcarte1.setEnabled(true);
             JRcarte2.setEnabled(true);
-            JBcarte1.setEnabled(false);
-            JBcarte2.setEnabled(false);
+            
         }
     }
     
@@ -351,17 +351,15 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     }
                 }
                 JoueurSuivant();
-                System.out.println("coucou");
             }
            
         });
     }
 
     public void VerifierSiPionEstSelectionne() {
-        while (PionSelectionné == null) {
-            BloquerToutesLescartes();
+        if (PionSelectionné!=null){
+            DebloquerCartesJoueur(PionSelectionné);
         }
-        DebloquerCartesJoueur(PionSelectionné);
     }
     
     public void BloquerToutesLescartes() {
@@ -376,9 +374,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     public void JoueurSuivant() {
         resetCases();
         if (!PartieTerminee()) { //PionSelectionné != null &&
-            //VerifierSiPionEstSelectionne();
             if ("bleu".equals(PionSelectionné.getCouleur())) {
-                DebloquerCartesJoueur(PionSelectionné);
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                          if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
@@ -392,7 +388,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                 }
             }
             if ("rouge".equals(PionSelectionné.getCouleur())) {
-                DebloquerCartesJoueur(PionSelectionné);
+                
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
@@ -407,10 +403,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                
                 
             }
-            //BloquerCartesAdverses(PionSelectionné);
-            if (PartieTerminee() == true) {
-                FinDePartie();
-            }
             PionSelectionné = null;
             BloquerToutesLescartes();
         } else {
@@ -420,7 +412,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     
     
     public void FinDePartie() {
-        AfficherTout(false);
+        AfficherTout(true);
         PanelRegles.setVisible(true);
         if (PionSelectionné.getCouleur() == "bleu") {
             PanelRegles.add(new JLabel("Victoire des bleus !"));
