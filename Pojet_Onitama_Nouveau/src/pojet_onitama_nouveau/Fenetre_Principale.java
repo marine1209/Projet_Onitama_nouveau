@@ -4,30 +4,16 @@
  */
 package pojet_onitama_nouveau;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import static java.awt.Color.GRAY;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.WHITE;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import static java.lang.Math.random;
-import static java.lang.StrictMath.random;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.JButton;
 import java.util.Random;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -36,7 +22,6 @@ import javax.swing.SwingUtilities;
 public class Fenetre_Principale extends javax.swing.JFrame {
 
     GrilleDeJeu grille;
-    int i;
     ArrayList<Cartes2> cartesTirees;
     private Pions PionSelectionné;
     Cartes2 carteSelectionnée;
@@ -51,10 +36,26 @@ public class Fenetre_Principale extends javax.swing.JFrame {
      */
     public Fenetre_Principale() {
         initComponents();
+        //initalise les cartes
         tirageCartes();
         affichageCartes();
+       
+        Start = new JButton("Commencer à jouer");
+    
+    // Ajout d'un écouteur d'événements pour le clic sur le bouton "Commencer à jouer"
+    Start.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Logique pour démarrer la partie
+            PanneauGrille.setVisible(true);
+            Start.setEnabled(false);
+            Start.setVisible(false);
+        }
+    });
+        //initialise la grille
         this.grille = new GrilleDeJeu();
         PanneauGrille.setLayout(new GridLayout(5, 5));
+        //PanneauGrille.setVisible(false);
         getContentPane().add(PanneauGrille, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 5 * 40, 5 * 40));
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -63,20 +64,16 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         PionSelectionné = bouton_case.onClick();
-                        //System.out.println(PionSelectionné.getPosition_ligne() + PionSelectionné.getPosition_colonne());
-                        System.out.print("test");
-
                     }
                 });
                 PanneauGrille.add(bouton_case); // ajout au Jpanel PanneauGrille
             }
         }
-
+        // initialise les panneaux des cartes
         PanneauCartesHaut.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesHaut, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70));
         PanneauCartesBas.setLayout(new GridLayout(1, 2));
-        getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 880, 1 * 30));
-        //System.out.println();
+        getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 880, 1 * 30));  
     }
 
     /**
@@ -107,20 +104,20 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         nomCartes.add("rooster");
         nomCartes.add("tiger");
         Random random = new Random();
-        for (int j = 0; j < 2; j++) {
-            int nombreTireAuHasard = random.nextInt(16 - j);
+        for (int j = 0; j < 2; j++) {//tirage des cartes rouges
+            int nombreTireAuHasard = random.nextInt(16 - j);//tirage d'un nombre au hasard entre 0 et 15, en enlevant à chaque fois le nombre tiré, pour ne pas tiré deux fois la même carte
             String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
             CartesRouges.add(new Cartes2(nomCarteTiree));
             nomCartes.remove(nombreTireAuHasard);
         }
 
-        for (int j = 0; j < 2; j++) {
+        for (int j = 0; j < 2; j++) {//tirage des cartes bleus
             int nombreTireAuHasard = random.nextInt(14 - j);
             String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
             CartesBleues.add(new Cartes2(nomCarteTiree));
             nomCartes.remove(nombreTireAuHasard);
         }
-        for (int j = 0; j < 1; j++) {
+        for (int j = 0; j < 1; j++) { //tirage de la carte de fausse
             int nombreTireAuHasard = random.nextInt(12 - j);
             String nomCarteTiree = nomCartes.get(nombreTireAuHasard);
             CarteDefausse.add(new Cartes2(nomCarteTiree));
@@ -297,22 +294,29 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         for (int i = 0; i < CoordonneePossible.size(); i++) {
             ligne = CoordonneePossible.get(i).get(0);
             colonne = CoordonneePossible.get(i).get(1);
-            if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) {
+            if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) { // test pour savoir si la case est occupée, si la case est occupé pas un pion adverse, alors il peut manger, sinon il ne peut pas se déplacer dessus
                 if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur() != grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur()) {
-                    grille.matriceCellules[ligne][colonne].setEnabled(true);
-                    grille.matriceCellules[ligne][colonne].setBackground(GREEN);
+                    grille.matriceCellules[ligne][colonne].setEnabled(true); // réactive la case pour que le joueur puisse cliqué dessus
+                    grille.matriceCellules[ligne][colonne].setBackground(GREEN);//met la case en évidence
                     
                 }
             } else {
                 grille.matriceCellules[ligne][colonne].setEnabled(true);
                 grille.matriceCellules[ligne][colonne].setBackground(GREEN);
             }
-            seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne);
+            seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne); //déplace le pion sur la case où le joueur à cliqué
 
         }
         
     }
 
+    /**
+     * Change les coordonnées du pion et l'état des cases mises en jeu
+     * @param nouvelleLigne
+     * @param nouvelleColonne
+     * @param ancienneLigne
+     * @param ancienneColonne
+     */
     public void deplacementDuPion(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
         grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
         grille.matriceCellules[nouvelleLigne][nouvelleColonne].ChangementDeCase(nouvelleLigne, nouvelleColonne);
@@ -324,20 +328,27 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
     }
 
+    /**
+     * En fonction de la ou le joueur clique, le pion se déplace dessus, les coordonnées sont changées ainsi que l'état des cases
+     * @param nouvelleLigne
+     * @param nouvelleColonne
+     * @param ancienneLigne
+     * @param ancienneColonne
+     */
     public void seDeplacerSurLaCase(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
         grille.matriceCellules[nouvelleLigne][nouvelleColonne].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) {
-                    grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
-                    deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) { //si la case est occupé mise en évidence est occupée, alors le joueur peut manger
+                    grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);//mange le pion adverse
+                    deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);//deplacement du pion sur la case
                 }
                 deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
-                        grille.matriceCellules[i][j].setBackground(WHITE);
-                        grille.matriceCellules[i][j].removeActionListener(this);
+                        grille.matriceCellules[i][j].setBackground(WHITE); //remet toutes la cases à leur état normal
+                        grille.matriceCellules[i][j].removeActionListener(this); 
                     }
                 }
             }
@@ -368,6 +379,8 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         PanneauCartesHaut = new javax.swing.JPanel();
         JRcarte2 = new javax.swing.JButton();
         JRcarte1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        Start = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1273, 1300));
@@ -509,43 +522,75 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         });
         PanneauCartesHaut.add(JRcarte1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 300, 170));
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        Start.setText("jButton1");
+        Start.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(116, 116, 116)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(185, 185, 185)
+                                .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(211, 211, 211)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(159, 159, 159)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(PanneauInfoJB, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(317, 317, 317)
-                .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 394, Short.MAX_VALUE)
-                .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(257, 257, 257))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))
-                    .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(14, 14, 14))
+                        .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(31, 31, 31)
-                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -569,46 +614,43 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         carteSelectionnée = CartesRouges.get(1); // carte qui correspond
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        mettreEnEvidence(déplacementPossibles);
-        System.out.println("coucou");
-        //JoueurSuivant();
+        mettreEnEvidence(déplacementPossibles); //mise en évidence des mouvements possibles
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
 
-        carteSelectionnée = CartesRouges.get(0); // carte qui correspond
-        System.out.println("Coordonnées du pion : " + PionSelectionné);
-        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
+        carteSelectionnée = CartesRouges.get(0); // carte qui correspond à JRcarte1
+        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>(); // création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        mettreEnEvidence(déplacementPossibles);
-        //JoueurSuivant();
+        mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
         carteSelectionnée = CartesBleues.get(0); // carte qui correspond
-        System.out.println("Coordonnées du pion : " + PionSelectionné);
-        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();// création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        mettreEnEvidence(déplacementPossibles);
-        //JoueurSuivant();
-
+        mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
 
     }//GEN-LAST:event_JBcarte1ActionPerformed
 
     private void JBcarte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte2ActionPerformed
         carteSelectionnée = CartesBleues.get(1); // carte qui correspond
-        System.out.println("Coordonnées du pion : " + PionSelectionné);
-        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>(); // création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
-        System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
-        mettreEnEvidence(déplacementPossibles);
-        //JoueurSuivant();
+        déplacementPossibles =carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
+        mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
         // TODO add your handling code here:
 
     }//GEN-LAST:event_BcartecoteActionPerformed
+
+    private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
+         PanneauGrille.setVisible(true);
+         Start.setEnabled(false);
+         Start.setVisible(false);
+    }//GEN-LAST:event_StartActionPerformed
 
     /**
      * @param args the command line arguments
@@ -657,6 +699,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     private javax.swing.JPanel PanneauGrille;
     private javax.swing.JPanel PanneauInfoJB;
     private javax.swing.JPanel PanneauInfoJR;
+    private javax.swing.JButton Start;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -665,6 +708,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
