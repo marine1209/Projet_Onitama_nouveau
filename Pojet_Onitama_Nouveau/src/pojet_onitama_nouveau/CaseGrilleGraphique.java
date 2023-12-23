@@ -52,7 +52,7 @@ public class CaseGrilleGraphique extends JButton {
                         g.fillOval(2, 2, longueur - 4, hauteur-4);
                     } else {
                         g.setColor(Color.red); // Par exemple, utiliser la couleur bleue
-                        g.fillRect(2, 2, longueur - 4, hauteur - 4);
+                        g.fillRect(8, 8, longueur - 15, hauteur - 15);
                     }
                 } else if ("bleu".equals(pion.getCouleur())) {
                     if (pion.estEleve() == true) {
@@ -60,7 +60,7 @@ public class CaseGrilleGraphique extends JButton {
                         g.fillOval(2, 2, longueur - 4, hauteur-4);
                     } else {
                         g.setColor(Color.blue); // Par exemple, utiliser la couleur bleue
-                        g.fillRect(2, 2, longueur - 4, hauteur - 4);
+                        g.fillRect(8, 8, longueur - 15, hauteur - 15);
                     }
                 }
             }
@@ -87,7 +87,7 @@ public class CaseGrilleGraphique extends JButton {
                         g.fillOval(2, 2, longueur - 4, hauteur-4);
                     } else {
                         g.setColor(Color.red); // Par exemple, utiliser la couleur bleue
-                        g.fillRect(2, 2, longueur - 4, hauteur - 4);
+                        g.fillRect(8, 8, longueur - 15, hauteur - 15);
                     }
                 } else if ("bleu".equals(pion.getCouleur())) {
                     if (pion.estEleve() == true) {
@@ -95,7 +95,7 @@ public class CaseGrilleGraphique extends JButton {
                         g.fillOval(2, 2, longueur - 4, hauteur-4);
                     } else {
                         g.setColor(Color.blue); // Par exemple, utiliser la couleur bleue
-                        g.fillRect(2, 2, longueur - 4, hauteur - 4);
+                        g.fillRect(8, 8, longueur - 15, hauteur - 15);
                     }
                 }
             }

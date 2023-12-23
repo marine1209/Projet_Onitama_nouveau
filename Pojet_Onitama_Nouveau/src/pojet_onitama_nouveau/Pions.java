@@ -56,6 +56,10 @@ public class Pions {
         return eleve;
     }
 
+    /**
+     * Vérifie si le pion est mort
+     * @return
+     */
     public boolean estMort() {
         return Mort;
     }

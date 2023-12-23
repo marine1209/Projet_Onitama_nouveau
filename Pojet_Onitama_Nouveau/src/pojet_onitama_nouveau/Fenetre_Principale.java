@@ -29,6 +29,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     ArrayList<Cartes2> CartesRouges;
     ArrayList<Cartes2> CartesBleues;
     ArrayList<Cartes2> CarteDefausse;
+    String equipe_gagnante = "";
 
     /**
      * Constructeur de la fenêtre principale. Initialise les composants
@@ -125,30 +126,61 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         this.CarteDefausse = CarteDefausse;
     }
 
+    /**
+     * Renvoie true si une équipe a gagné, false sinon
+     * @return
+     */
     public boolean PartieTerminee() {
+        boolean sensei_present = false;
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee() == true) {
-                    if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estMort() == true) {
-                        FinDePartie();
-                        return true;
-                    }
-                    if (grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.getCouleur() == "bleu") {
-                        FinDePartie();
-                        return true;
-                    }
-                    if (grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.getCouleur() == "rouge") {
-                        FinDePartie();
-                        return true;
-                    }
+                if (grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.getCouleur() == "bleu") {
+                    equipe_gagnante = "bleu";
+                    return true;
+                }
+                if (grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.getCouleur() == "rouge") {
+                    equipe_gagnante = "rouge";
+                    return true;
                 }
             }
+        }
+        ArrayList<Pions> pions_presents = new ArrayList<>();
+        int nb_sensei = 0;
+        String couleur_pion = "";
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe != null) {
+                    pions_presents.add(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe);
+                }
+            }
+        }
+        for (int k = 0 ; k<pions_presents.size() ; k++) {
+            if (pions_presents.get(k).estEleve() == false)  {
+                nb_sensei++;
+            }
+        }
+        if (nb_sensei != 2) {
+            for (int k = 0 ; k<pions_presents.size() ; k++) {
+                if (pions_presents.get(k).estEleve() == false) {
+                    couleur_pion = pions_presents.get(k).getCouleur();
+                }
+            }
+            if (couleur_pion == "bleu") {
+                equipe_gagnante = "bleu";
+            } else if (couleur_pion == "rouge") {
+                equipe_gagnante = "rouge";
+            }
+            return true;
         }
         
         return false;
     }
 
-    public void BloquerCartesAdverses(Pions pion) {
+    /**
+     * Bloque les cartes dont la couleur est la même que celle du pion en entrée
+     * @param pion
+     */
+    public void BloquerCartesJoueur(Pions pion) {
         System.out.println("Blocage des cartes adverses pour le joueur " + pion.getCouleur());
     
         if (pion.getCouleur() == "bleu") {
@@ -164,7 +196,10 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }
     }
     
-    
+    /**
+     * Débloque les cartes dont la couleur est la même que celle du pion en entrée
+     * @param pion
+     */
     public void DebloquerCartesJoueur(Pions pion) {
         if (pion.getCouleur() == "bleu") {
             JBcarte1.setEnabled(true);
@@ -176,10 +211,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             
         }
     }
-    
-    
-    
-    
     
     
     private void resetCases() {
@@ -240,6 +271,10 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Permet d'échanger la carte utilisée avec la carte sur le côté du plateau
+     * @param carteJouee
+     */
     public void echangerLesCartes(Cartes2 carteJouee) {
         if (CartesRouges.contains(carteJouee)) {
             int indiceCarteJouee = CartesRouges.indexOf(carteJouee);
@@ -259,6 +294,11 @@ public class Fenetre_Principale extends javax.swing.JFrame {
 
     }
     
+    /**
+     * Rend visibles ou invisibles le plateau, les cartes et le bouton start
+     * selon que etat a la valeur true ou false respectivement
+     * @param etat
+     */
     public void AfficherTout (boolean etat) {
         PanneauGrille.setVisible(etat);
         PanneauCartesHaut.setVisible(etat);
@@ -356,12 +396,18 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Debloque les cartes de la couleur du pion si celui-ci est sélectionné
+     */
     public void VerifierSiPionEstSelectionne() {
         if (PionSelectionné!=null){
             DebloquerCartesJoueur(PionSelectionné);
         }
     }
     
+    /**
+     * Bloque l'accès à toutes les cartes
+     */
     public void BloquerToutesLescartes() {
         JBcarte1.setEnabled(false);
         JBcarte2.setEnabled(false);
@@ -370,7 +416,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         Bcartecote.setEnabled(false);
     }
     
-    
+    /**
+     * Gère le passage d'un tour de jeu à l'autre
+     */
     public void JoueurSuivant() {
         resetCases();
         if (!PartieTerminee()) { //PionSelectionné != null &&
@@ -400,8 +448,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                         }
                     }
                 }
-               
-                
             }
             PionSelectionné = null;
             BloquerToutesLescartes();
@@ -410,13 +456,15 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }  
     }
     
-    
+    /**
+     * Cache tous les éléments de la frame et affiche un message de victoire
+     */
     public void FinDePartie() {
-        AfficherTout(true);
+        AfficherTout(false);
         PanelRegles.setVisible(true);
-        if (PionSelectionné.getCouleur() == "bleu") {
+        if (equipe_gagnante == "bleu") {
             PanelRegles.add(new JLabel("Victoire des bleus !"));
-        } else if (PionSelectionné.getCouleur() == "rouge") {
+        } else if (equipe_gagnante == "rouge") {
             PanelRegles.add(new JLabel("Victoire des rouges !"));
         }
     }
