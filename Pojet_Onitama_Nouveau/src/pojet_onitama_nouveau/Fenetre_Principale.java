@@ -131,24 +131,79 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         this.CartesBleues = CartesBleues;
         this.CarteDefausse = CarteDefausse;
     }
+
+    public boolean PartieTerminee() {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee() == true) {
+                    if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.estMort() == true) {
+                        return true;
+                    }
+                    if (grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[0][2].caseGrilleAssociee.pion_associe.getCouleur() == "bleu") {
+                        return true;
+                    }
+                    if (grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.estEleve() == false && grille.matriceCellules[4][2].caseGrilleAssociee.pion_associe.getCouleur() == "rouge") {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public void BloquerCartesAdverses(Pions pion) {
+        System.out.println("Blocage des cartes adverses pour le joueur : " + pion.getCouleur());
+    
         if (pion.getCouleur() == "bleu") {
             JBcarte1.setEnabled(false);
             JBcarte2.setEnabled(false);
+            JRcarte1.setEnabled(true);
+            JRcarte2.setEnabled(true);
         } else {
             JRcarte1.setEnabled(false);
             JRcarte2.setEnabled(false);
+            JBcarte1.setEnabled(true);
+            JBcarte2.setEnabled(true);
         }
     }
-    public void JoueurSuivant(){
-        
+
+    public void JoueurSuivant() {
+        if (PartieTerminee() == false) {
+            if (PionSelectionné.getCouleur() == "bleu") {
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
+                            grille.matriceCellules[i][j].setEnabled(false);
+                         }else
+                        if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur() == "bleu" || grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()==false) {
+                            grille.matriceCellules[i][j].setEnabled(false);
+                            
+                        }
+                    }
+                }
+            }
+            if (PionSelectionné.getCouleur() == "rouge") {
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
+                            grille.matriceCellules[i][j].setEnabled(false);
+                        }else
+                        if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur() == "rouge" ) {
+                            grille.matriceCellules[i][j].setEnabled(false);
+                            
+                        }
+                    }
+                }
+                
+                
+            }
+            BloquerCartesAdverses(PionSelectionné);
+            System.out.print("cocuouc");
+            PartieTerminee();
+        }
+
     }
-    
-  
 
-
-
-   
     /**
      * Méthode qui Affiche les cartes tirées sur les composants graphiques
      * appropriés. Utilise les icônes d'images spécifiées par le nom de chaque
@@ -198,25 +253,24 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         }
 
     }
-    public void echangerLesCartes(Cartes2 carteJouee){
-        if (CartesRouges.contains(carteJouee)){
-             int indiceCarteJouee = CartesRouges.indexOf(carteJouee);
-             CartesRouges.set(indiceCarteJouee, CarteDefausse.get(0));
-             CarteDefausse.set(0, carteJouee);
-                affichageCartes();
-               
-        
+
+    public void echangerLesCartes(Cartes2 carteJouee) {
+        if (CartesRouges.contains(carteJouee)) {
+            int indiceCarteJouee = CartesRouges.indexOf(carteJouee);
+            CartesRouges.set(indiceCarteJouee, CarteDefausse.get(0));
+            CarteDefausse.set(0, carteJouee);
+            affichageCartes();
+
         }
-        if (CartesBleues.contains(carteJouee)){
-             int indiceCarteJouee = CartesBleues.indexOf(carteJouee);
-             CartesBleues.set(indiceCarteJouee, CarteDefausse.get(0));
-             CarteDefausse.set(0, carteJouee);
-                affichageCartes();
-                
-        
+        if (CartesBleues.contains(carteJouee)) {
+            int indiceCarteJouee = CartesBleues.indexOf(carteJouee);
+            CartesBleues.set(indiceCarteJouee, CarteDefausse.get(0));
+            CarteDefausse.set(0, carteJouee);
+            affichageCartes();
+
         }
-       // System.out.println(CarteDefausse.get(0).getNom());
-        
+        // System.out.println(CarteDefausse.get(0).getNom());
+
     }
 
     private ImageIcon createImageIcon(String path) {
@@ -228,7 +282,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             return null;
         }
     }
- 
 
     /**
      * Met en évidence les cellules de la grille aux coordonnées spécifiées en
@@ -246,35 +299,40 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             colonne = CoordonneePossible.get(i).get(1);
             if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) {
                 if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur() != grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur()) {
-                    grille.matriceCellules[ligne][colonne].setBackground(GREEN);
                     grille.matriceCellules[ligne][colonne].setEnabled(true);
+                    grille.matriceCellules[ligne][colonne].setBackground(GREEN);
+                    
                 }
-            }else
-               grille.matriceCellules[ligne][colonne].setBackground(GREEN); 
-               seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne);
-                  
-      
-        }
-     echangerLesCartes(carteSelectionnée);
-    }
-   public void deplacementDuPion(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne){
-       grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
-                grille.matriceCellules[nouvelleLigne][nouvelleColonne].ChangementDeCase(nouvelleLigne, nouvelleColonne);
-                grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.setEtat(false);
-                grille.matriceCellules[ancienneLigne][ancienneColonne].mettreAJour();
-                
-   }
+            } else {
+                grille.matriceCellules[ligne][colonne].setBackground(GREEN);
+            }
+            seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne);
 
-   public void seDeplacerSurLaCase(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
+        }
+        
+    }
+
+    public void deplacementDuPion(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
+        grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.setPion_associe(PionSelectionné);
+        grille.matriceCellules[nouvelleLigne][nouvelleColonne].ChangementDeCase(nouvelleLigne, nouvelleColonne);
+        grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.setEtat(false);
+        grille.matriceCellules[ancienneLigne][ancienneColonne].mettreAJour();
+        echangerLesCartes(carteSelectionnée);
+        JoueurSuivant();
+        
+
+    }
+
+    public void seDeplacerSurLaCase(int nouvelleLigne, int nouvelleColonne, int ancienneLigne, int ancienneColonne) {
         grille.matriceCellules[nouvelleLigne][nouvelleColonne].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
                 if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) {
                     grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);
-                   deplacementDuPion( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
-                } 
-                deplacementDuPion( nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                    deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
+                }
+                deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         grille.matriceCellules[i][j].setBackground(WHITE);
@@ -512,7 +570,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);
         System.out.println("coucou");
-       // echangerLesCartes(CartesRouges.get(1));
+        //JoueurSuivant();
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
@@ -522,7 +580,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);
-        //echangerLesCartes(CartesRouges.get(0));
+        //JoueurSuivant();
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
@@ -531,7 +589,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);
-       //echangerLesCartes(CartesBleues.get(0));
+        //JoueurSuivant();
 
 
     }//GEN-LAST:event_JBcarte1ActionPerformed
@@ -543,7 +601,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         System.out.println(carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()));
         mettreEnEvidence(déplacementPossibles);
-      // echangerLesCartes(CartesBleues.get(1));
+        //JoueurSuivant();
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
