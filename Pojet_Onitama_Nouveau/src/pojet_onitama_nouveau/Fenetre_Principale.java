@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import java.util.Random;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -52,6 +53,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         PionSelectionné = bouton_case.onClick();
+                        VerifierSiPionEstSelectionne();
                     }
                 });
                 PanneauGrille.add(bouton_case); // ajout au Jpanel PanneauGrille
@@ -143,7 +145,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }
 
     public void BloquerCartesAdverses(Pions pion) {
-        System.out.println("Blocage des cartes adverses pour le joueur : " + pion.getCouleur());
+        System.out.println("Blocage des cartes adverses pour le joueur " + pion.getCouleur());
     
         if (pion.getCouleur() == "bleu") {
             JBcarte1.setEnabled(false);
@@ -157,46 +159,29 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             JBcarte2.setEnabled(true);
         }
     }
-
-    public void JoueurSuivant() {
-         resetCases();
-        if (PionSelectionné != null && !PartieTerminee()) {
-            if ("bleu".equals(PionSelectionné.getCouleur())) {
-                
-                for (int i = 0; i < 5; i++) {
-                    for (int j = 0; j < 5; j++) {
-                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
-                            grille.matriceCellules[i][j].setEnabled(false);
-                         }else
-                        if ("bleu".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) || grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()==false) {
-                            grille.matriceCellules[i][j].setEnabled(false);
-                            
-                        }
-                    }
-                }
-            }
-            if ("rouge".equals(PionSelectionné.getCouleur())) {
-                
-                for (int i = 0; i < 5; i++) {
-                    for (int j = 0; j < 5; j++) {
-                        if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
-                            grille.matriceCellules[i][j].setEnabled(false);
-                        }else
-                        if ("rouge".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) ) {
-                            grille.matriceCellules[i][j].setEnabled(false);
-                            
-                        }
-                    }
-                }
-               
-                
-            }
-            BloquerCartesAdverses(PionSelectionné);
-            PionSelectionné=null;
-            PartieTerminee();
+    
+    
+    public void DebloquerCartesJoueur(Pions pion) {
+        System.out.println("Déblocage des cartes pour le joueur " + pion.getCouleur());
+    
+        if (pion.getCouleur() == "bleu") {
+            JBcarte1.setEnabled(true);
+            JBcarte2.setEnabled(true);
+            JRcarte1.setEnabled(false);
+            JRcarte2.setEnabled(false);
+        } else {
+            JRcarte1.setEnabled(true);
+            JRcarte2.setEnabled(true);
+            JBcarte1.setEnabled(false);
+            JBcarte2.setEnabled(false);
         }
-
     }
+    
+    
+    
+    
+    
+    
     private void resetCases() {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
@@ -273,6 +258,16 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         // System.out.println(CarteDefausse.get(0).getNom());
 
     }
+    
+    public void AfficherTout (boolean etat) {
+        PanneauGrille.setVisible(etat);
+        PanneauCartesHaut.setVisible(etat);
+        PanneauCartesBas.setVisible(etat);
+        PanneauInfoJR.setVisible(etat);
+        PanneauInfoJB.setVisible(etat);
+        Bcartecote.setVisible(etat);
+        Start.setVisible(false);
+    }
 
     private ImageIcon createImageIcon(String path) {
         URL imageURL = getClass().getResource(path);
@@ -344,7 +339,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) { //si la case est occupé mise en évidence est occupée, alors le joueur peut manger
+                if (grille.matriceCellules[nouvelleLigne][nouvelleColonne].caseGrilleAssociee.getEtat() == true) { //si la case mise en évidence est occupée, alors le joueur peut se déplacer
                     grille.matriceCellules[ancienneLigne][ancienneColonne].Manger(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe(), PionSelectionné);//mange le pion adverse
                     deplacementDuPion(nouvelleLigne, nouvelleColonne, ancienneLigne, ancienneColonne);//deplacement du pion sur la case
                 }
@@ -362,6 +357,78 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         });
     }
 
+    public void VerifierSiPionEstSelectionne() {
+        while (PionSelectionné == null) {
+            BloquerToutesLescartes();
+        }
+        DebloquerCartesJoueur(PionSelectionné);
+    }
+    
+    public void BloquerToutesLescartes() {
+        JBcarte1.setEnabled(false);
+        JBcarte2.setEnabled(false);
+        JRcarte1.setEnabled(false);
+        JRcarte2.setEnabled(false);
+        Bcartecote.setEnabled(false);
+    }
+    
+    
+    public void JoueurSuivant() {
+        resetCases();
+        if (!PartieTerminee()) { //PionSelectionné != null &&
+            //VerifierSiPionEstSelectionne();
+            if ("bleu".equals(PionSelectionné.getCouleur())) {
+                DebloquerCartesJoueur(PionSelectionné);
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
+                            grille.matriceCellules[i][j].setEnabled(false);
+                         }else
+                        if ("bleu".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) || grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()==false) {
+                            grille.matriceCellules[i][j].setEnabled(false);
+                            
+                        }
+                    }
+                }
+            }
+            if ("rouge".equals(PionSelectionné.getCouleur())) {
+                DebloquerCartesJoueur(PionSelectionné);
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
+                            grille.matriceCellules[i][j].setEnabled(false);
+                        }else
+                        if ("rouge".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) ) {
+                            grille.matriceCellules[i][j].setEnabled(false);
+                            
+                        }
+                    }
+                }
+               
+                
+            }
+            //BloquerCartesAdverses(PionSelectionné);
+            if (PartieTerminee() == true) {
+                FinDePartie();
+            }
+            PionSelectionné = null;
+            BloquerToutesLescartes();
+        } else {
+            FinDePartie();
+        }  
+    }
+    
+    
+    public void FinDePartie() {
+        AfficherTout(false);
+        PanelRegles.setVisible(true);
+        if (PionSelectionné.getCouleur() == "bleu") {
+            PanelRegles.add(new JLabel("Victoire des bleus !"));
+        } else if (PionSelectionné.getCouleur() == "rouge") {
+            PanelRegles.add(new JLabel("Victoire des rouges !"));
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -387,6 +454,11 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         JRcarte2 = new javax.swing.JButton();
         JRcarte1 = new javax.swing.JButton();
         Start = new javax.swing.JButton();
+        PanelRegles = new javax.swing.JPanel();
+        TitreRèglesJeu = new javax.swing.JLabel();
+        Regle1 = new javax.swing.JLabel();
+        Regle2 = new javax.swing.JLabel();
+        Regle3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1273, 1300));
@@ -537,52 +609,98 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             }
         });
 
+        PanelRegles.setBackground(new java.awt.Color(255, 204, 0));
+
+        TitreRèglesJeu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        TitreRèglesJeu.setText("Règles du jeu");
+
+        Regle1.setText("1. Cliquez sur le pion que vous voulez déplacer");
+
+        Regle2.setText("2. Cliquez sur la carte que vous voulez utiliser");
+
+        Regle3.setText("3. Cliquez sur la case verte où vous voulez aller");
+
+        javax.swing.GroupLayout PanelReglesLayout = new javax.swing.GroupLayout(PanelRegles);
+        PanelRegles.setLayout(PanelReglesLayout);
+        PanelReglesLayout.setHorizontalGroup(
+            PanelReglesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelReglesLayout.createSequentialGroup()
+                .addGroup(PanelReglesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PanelReglesLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(PanelReglesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Regle3)
+                            .addComponent(Regle2)
+                            .addComponent(Regle1)))
+                    .addGroup(PanelReglesLayout.createSequentialGroup()
+                        .addGap(111, 111, 111)
+                        .addComponent(TitreRèglesJeu, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+        PanelReglesLayout.setVerticalGroup(
+            PanelReglesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelReglesLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(TitreRèglesJeu)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Regle1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Regle2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Regle3)
+                .addContainerGap(27, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(116, 116, 116)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(116, 116, 116)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(168, 168, 168))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(317, 317, 317)
-                        .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(159, 159, 159)
+                        .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(168, 168, 168)))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(PanneauInfoJB, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(PanelRegles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(33, 33, 33))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(317, 317, 317)
+                .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(296, 296, 296))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(14, 14, 14))
-                        .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(PanelRegles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(14, 14, 14)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(65, 65, 65)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(234, 234, 234)
                         .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -608,7 +726,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles); //mise en évidence des mouvements possibles
-     
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
@@ -617,7 +734,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>(); // création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
-    
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
@@ -625,7 +741,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();// création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
-
     }//GEN-LAST:event_JBcarte1ActionPerformed
 
     private void JBcarte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte2ActionPerformed
@@ -634,7 +749,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         déplacementPossibles =carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
-
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
@@ -645,11 +759,11 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
             PanneauCartesHaut.setVisible(true);
             PanneauCartesBas.setVisible(true);
-            JRcarte1.setEnabled(true);
-            JRcarte2.setEnabled(true);
+            JRcarte1.setEnabled(false);
+            JRcarte2.setEnabled(false);
             PanneauGrille.setVisible(true);
             Bcartecote.setVisible(true);
-           for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
                             grille.matriceCellules[i][j].setEnabled(false);
@@ -660,9 +774,14 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                         }
                     }
                 }
-            Bcartecote.setEnabled(true);
+            Bcartecote.setEnabled(false);
             Start.setEnabled(false);
             Start.setVisible(false);
+            TitreRèglesJeu.setVisible(false);
+            Regle1.setVisible(false);
+            Regle2.setVisible(false);
+            Regle3.setVisible(false);
+            PanelRegles.setVisible(false);
     }//GEN-LAST:event_StartActionPerformed
 
     /**
@@ -707,12 +826,17 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     private javax.swing.JButton JBcarte2;
     private javax.swing.JButton JRcarte1;
     private javax.swing.JButton JRcarte2;
+    private javax.swing.JPanel PanelRegles;
     private javax.swing.JPanel PanneauCartesBas;
     private javax.swing.JPanel PanneauCartesHaut;
     private javax.swing.JPanel PanneauGrille;
     private javax.swing.JPanel PanneauInfoJB;
     private javax.swing.JPanel PanneauInfoJR;
+    private javax.swing.JLabel Regle1;
+    private javax.swing.JLabel Regle2;
+    private javax.swing.JLabel Regle3;
     private javax.swing.JButton Start;
+    private javax.swing.JLabel TitreRèglesJeu;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
