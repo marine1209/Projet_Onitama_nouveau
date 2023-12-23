@@ -26,7 +26,7 @@ public class Cartes2 {
 
     /**
      * Calcule les coordonnées de déplacement possibles pour un pion bleu en
-     * fonction de sa nature.
+     * fonction de son nom.
      *
      * @param ligne
      * @param colonne
@@ -140,8 +140,8 @@ public class Cartes2 {
     }
 
     /**
-     * Calcule les coordonnées de déplacement possibles pour un pion bleu en
-     * fonction de sa nature.
+     * Calcule les coordonnées de déplacement possibles pour un pion rouge en
+     * fonction de son nom.
      *
      * @param ligne
      * @param colonne
@@ -254,13 +254,20 @@ public class Cartes2 {
         return déplacementPossibles;
     }
 
+    /**
+     * retourne les coordonnées possible pour un pion en fonction  de sa position et de la carte choisie
+     * @param déplacements
+     * @param ligne
+     * @param colonne
+     * @return
+     */
     public ArrayList deplacementVraimentsPossibles(ArrayList<ArrayList<Integer>> déplacements, int ligne, int colonne) {
         ArrayList<ArrayList<Integer>> coordonneesValides = new ArrayList<>();
         for (int i = 0; i < déplacements.size(); i++) {
             int l= déplacements.get(i).get(0);
             int c = déplacements.get(i).get(1);
             if ( l>=0 && l<5 && c>=0 && c<5){
-            coordonneesValides.add(déplacements.get(i));
+            coordonneesValides.add(déplacements.get(i));//si la coordonnée est valide, l'indice correspondant s'ajoute à une nouvelle liste, les coordonnées valides
             }
 
         }

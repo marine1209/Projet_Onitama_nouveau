@@ -40,22 +40,10 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         tirageCartes();
         affichageCartes();
        
-        Start = new JButton("Commencer à jouer");
-    
-    // Ajout d'un écouteur d'événements pour le clic sur le bouton "Commencer à jouer"
-    Start.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Logique pour démarrer la partie
-            PanneauGrille.setVisible(true);
-            Start.setEnabled(false);
-            Start.setVisible(false);
-        }
-    });
+        Start = new JButton("Start");
         //initialise la grille
         this.grille = new GrilleDeJeu();
         PanneauGrille.setLayout(new GridLayout(5, 5));
-        //PanneauGrille.setVisible(false);
         getContentPane().add(PanneauGrille, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 5 * 40, 5 * 40));
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -67,19 +55,25 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     }
                 });
                 PanneauGrille.add(bouton_case); // ajout au Jpanel PanneauGrille
+                PanneauGrille.setVisible(false);
             }
         }
         // initialise les panneaux des cartes
         PanneauCartesHaut.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesHaut, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70));
+        PanneauCartesHaut.setVisible(false);
         PanneauCartesBas.setLayout(new GridLayout(1, 2));
         getContentPane().add(PanneauCartesBas, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 2 * 880, 1 * 30));  
+        PanneauCartesBas.setVisible(false);
+       Bcartecote.setVisible(false);
     }
+    
+    
 
     /**
      * Méthode qui tire 5 cartes aléatoirement
-     *
-     * @return un arraylist contenant les 5 cartes
+     * renvoie une arraylist contenant les 5 cartes
+     * 
      */
     public void tirageCartes() {
         ArrayList<Cartes2> cartesTirees = new ArrayList<Cartes2>();
@@ -165,41 +159,51 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }
 
     public void JoueurSuivant() {
-        if (PartieTerminee() == false) {
-            if (PionSelectionné.getCouleur() == "bleu") {
+         resetCases();
+        if (PionSelectionné != null && !PartieTerminee()) {
+            if ("bleu".equals(PionSelectionné.getCouleur())) {
+                
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                          if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
                             grille.matriceCellules[i][j].setEnabled(false);
                          }else
-                        if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur() == "bleu" || grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()==false) {
+                        if ("bleu".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) || grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()==false) {
                             grille.matriceCellules[i][j].setEnabled(false);
                             
                         }
                     }
                 }
             }
-            if (PionSelectionné.getCouleur() == "rouge") {
+            if ("rouge".equals(PionSelectionné.getCouleur())) {
+                
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
                             grille.matriceCellules[i][j].setEnabled(false);
                         }else
-                        if (grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur() == "rouge" ) {
+                        if ("rouge".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) ) {
                             grille.matriceCellules[i][j].setEnabled(false);
                             
                         }
                     }
                 }
-                
+               
                 
             }
             BloquerCartesAdverses(PionSelectionné);
-            System.out.print("cocuouc");
+            PionSelectionné=null;
             PartieTerminee();
         }
 
     }
+    private void resetCases() {
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            grille.matriceCellules[i][j].setEnabled(true);
+        }
+    }
+}
 
     /**
      * Méthode qui Affiche les cartes tirées sur les composants graphiques
@@ -295,7 +299,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             ligne = CoordonneePossible.get(i).get(0);
             colonne = CoordonneePossible.get(i).get(1);
             if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.estOccupee() == true) { // test pour savoir si la case est occupée, si la case est occupé pas un pion adverse, alors il peut manger, sinon il ne peut pas se déplacer dessus
-                if (grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur() != grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur()) {
+                if (!grille.matriceCellules[ligne][colonne].caseGrilleAssociee.getPion_associe().getCouleur().equals(grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.getPion_associe().getCouleur())) {
                     grille.matriceCellules[ligne][colonne].setEnabled(true); // réactive la case pour que le joueur puisse cliqué dessus
                     grille.matriceCellules[ligne][colonne].setBackground(GREEN);//met la case en évidence
                     
@@ -305,7 +309,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                 grille.matriceCellules[ligne][colonne].setBackground(GREEN);
             }
             seDeplacerSurLaCase(ligne, colonne, ancienneLigne, ancienneColonne); //déplace le pion sur la case où le joueur à cliqué
-
+            
         }
         
     }
@@ -323,7 +327,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         grille.matriceCellules[ancienneLigne][ancienneColonne].caseGrilleAssociee.setEtat(false);
         grille.matriceCellules[ancienneLigne][ancienneColonne].mettreAJour();
         echangerLesCartes(carteSelectionnée);
-        JoueurSuivant();
+        
         
 
     }
@@ -351,7 +355,10 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                         grille.matriceCellules[i][j].removeActionListener(this); 
                     }
                 }
+                JoueurSuivant();
+                System.out.println("coucou");
             }
+           
         });
     }
 
@@ -379,7 +386,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         PanneauCartesHaut = new javax.swing.JPanel();
         JRcarte2 = new javax.swing.JButton();
         JRcarte1 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
         Start = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -522,18 +528,9 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         });
         PanneauCartesHaut.add(JRcarte1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 300, 170));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        Start.setText("jButton1");
+        Start.setBackground(new java.awt.Color(51, 153, 255));
+        Start.setForeground(new java.awt.Color(0, 0, 51));
+        Start.setText("Start");
         Start.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 StartActionPerformed(evt);
@@ -549,20 +546,19 @@ public class Fenetre_Principale extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(116, 116, 116)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(185, 185, 185)
-                                .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(168, 168, 168))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(211, 211, 211)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(317, 317, 317)
                         .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(159, 159, 159)))
+                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(159, 159, 159)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(PanneauInfoJB, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -572,30 +568,27 @@ public class Fenetre_Principale extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(PanneauInfoJR, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(14, 14, 14))
                         .addComponent(PanneauCartesHaut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(Start, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)))
+                        .addGap(65, 65, 65)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(PanneauGrille, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(31, 31, 31)
-                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Bcartecote, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(PanneauCartesBas, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(PanneauInfoJB, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addContainerGap(666, Short.MAX_VALUE))
         );
 
         pack();
@@ -615,6 +608,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>();
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles); //mise en évidence des mouvements possibles
+     
     }//GEN-LAST:event_JRcarte2ActionPerformed
 
     private void JRcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRcarte1ActionPerformed
@@ -623,6 +617,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         ArrayList<ArrayList<Integer>> déplacementPossibles = new ArrayList<ArrayList<Integer>>(); // création d'une nouvelle liste de déplacement en fonction du nom de la carte et de l'emplacement du pion selectionné
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_rouge(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
+    
     }//GEN-LAST:event_JRcarte1ActionPerformed
 
     private void JBcarte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBcarte1ActionPerformed
@@ -639,6 +634,7 @@ public class Fenetre_Principale extends javax.swing.JFrame {
         déplacementPossibles = carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         déplacementPossibles =carteSelectionnée.deplacementVraimentsPossibles(carteSelectionnée.deplacement_possible_bleu(PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne()), PionSelectionné.getPosition_ligne(), PionSelectionné.getPosition_colonne());
         mettreEnEvidence(déplacementPossibles);//mise en évidence des mouvements possibles
+
     }//GEN-LAST:event_JBcarte2ActionPerformed
 
     private void BcartecoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BcartecoteActionPerformed
@@ -647,9 +643,26 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     }//GEN-LAST:event_BcartecoteActionPerformed
 
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
-         PanneauGrille.setVisible(true);
-         Start.setEnabled(false);
-         Start.setVisible(false);
+            PanneauCartesHaut.setVisible(true);
+            PanneauCartesBas.setVisible(true);
+            JRcarte1.setEnabled(true);
+            JRcarte2.setEnabled(true);
+            PanneauGrille.setVisible(true);
+            Bcartecote.setVisible(true);
+           for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (grille.matriceCellules[i][j].caseGrilleAssociee.estOccupee()== false){
+                            grille.matriceCellules[i][j].setEnabled(false);
+                        }else
+                        if ("rouge".equals(grille.matriceCellules[i][j].caseGrilleAssociee.pion_associe.getCouleur()) ) {
+                            grille.matriceCellules[i][j].setEnabled(false);
+                            
+                        }
+                    }
+                }
+            Bcartecote.setEnabled(true);
+            Start.setEnabled(false);
+            Start.setVisible(false);
     }//GEN-LAST:event_StartActionPerformed
 
     /**
@@ -708,7 +721,6 @@ public class Fenetre_Principale extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables

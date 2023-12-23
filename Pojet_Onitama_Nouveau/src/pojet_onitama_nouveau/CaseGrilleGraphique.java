@@ -16,9 +16,18 @@ import javax.swing.JButton;
 public class CaseGrilleGraphique extends JButton {
     CaseGrille caseGrilleAssociee;
 
+    /**
+     *Constructeur
+     * @param caseGrilleAssociee
+     */
     public CaseGrilleGraphique(CaseGrille caseGrilleAssociee) {
         this.caseGrilleAssociee= caseGrilleAssociee;
     }
+
+    /**
+     *renvoie la case grille associée
+     * @return
+     */
     public CaseGrille getCaseGrille (){
         return this.caseGrilleAssociee;
     }
@@ -61,6 +70,9 @@ public class CaseGrilleGraphique extends JButton {
         }
     }
     
+    /**
+     *Elle est appelée à chauqe fois qu'un pion est déplaceé, afin de mettre la grille à jour
+     */
     public void mettreAJour(){
         Graphics g=this.getGraphics();
         super.paintComponent(g);
@@ -104,28 +116,31 @@ public class CaseGrilleGraphique extends JButton {
         return pionSelectionne;
     }
     
- 
+    /**
+     *Permet de changer un pion de case
+     * @param ligne
+     * @param colonne
+     */
     public void ChangementDeCase(int ligne, int colonne){
-        caseGrilleAssociee.activerCase();
-        caseGrilleAssociee.getPion_associe().changement_coord(ligne, colonne);
-        mettreAJour();
+        caseGrilleAssociee.activerCase(); //nouvelle case activée
+        caseGrilleAssociee.getPion_associe().changement_coord(ligne, colonne);//la nouvelle case récupère le pion de l'ancienne case
+        mettreAJour();//mise à jour de la grille
         repaint();
     } 
-public void Manger(Pions pionAttaque, Pions pionAttaquant) {
-        int ligneAttaque = pionAttaque.getPosition_ligne();
-        int colonneAttaque = pionAttaque.getPosition_colonne();
-        int ligneAttaquant = pionAttaquant.getPosition_ligne();
-        int colonneAttaquant= pionAttaquant.getPosition_colonne();      
+
+    /**
+     * Permet de manger un pion et le faire disparaitre
+     * @param pionAttaque
+     * @param pionAttaquant
+     */
+    public void Manger(Pions pionAttaque, Pions pionAttaquant) {    
         if (pionAttaque.getCouleur()!= pionAttaquant.getCouleur()){
-            pionAttaque.estMort(); 
-            caseGrilleAssociee.setEtat(false);
-            caseGrilleAssociee.setPion_associe(pionAttaquant);
+            pionAttaque.estMort(); //change l'etat du pion attaqué
+            caseGrilleAssociee.setEtat(false); 
+            caseGrilleAssociee.setPion_associe(pionAttaquant); //associe le pion attaquant à la case attaquée
         } 
         
-    }      
-    
-            
-           
+    }       
         
     }
 

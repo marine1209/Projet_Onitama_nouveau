@@ -3,11 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package pojet_onitama_nouveau;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.ArrayList;
-
 /**
  *
  * @author marin
@@ -73,6 +68,10 @@ public class CaseGrille {
         return etat;
     }
 
+    /**
+     * Change le pion de la case
+     * @param pion_associe
+     */
     public void setPion_associe(Pions pion_associe) {
         this.pion_associe = pion_associe;
     }
@@ -84,20 +83,6 @@ public class CaseGrille {
      */
     public Pions getPion_associe() {
         return pion_associe;
-    }
-    
-    
-
-    private Graphics getGraphics() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private int getWidth() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private int getHeight() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }
